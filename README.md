@@ -3,194 +3,160 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>حضوربان | سامانه هوشمند حضور و غیاب</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حضوربان</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Tahoma,Arial;background:#eef2f7;color:#243247}
-header{background:#12345a;color:white;padding:22px;text-align:center}
-header h1{margin:0 0 8px;font-size:25px}
-header p{margin:0;color:#d5e6f7}
-main{max-width:850px;margin:25px auto;padding:12px}
-.card{background:white;padding:22px;border-radius:14px;margin-bottom:18px;box-shadow:0 3px 14px #0000000d}
-h2{font-size:19px;color:#173e68;margin-top:0}
-input,select{width:100%;padding:13px;margin:8px 0 15px;border:1px solid #ccd5df;border-radius:8px;font-family:Tahoma;font-size:14px}
-button{border:0;border-radius:9px;padding:13px 18px;background:#1765a5;color:white;font-family:Tahoma;font-size:14px;cursor:pointer;width:100%;margin-top:8px}
-button.secondary{background:#e7eef6;color:#173e68}
-button.danger{background:#a93636}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stat{background:#edf4fb;border-radius:10px;padding:16px;text-align:center}
-.stat strong{display:block;font-size:20px;color:#155b96;margin-top:8px}
+body{margin:0;background:#eef2f7;font-family:Tahoma;color:#263449}
+header{background:#173b67;color:white;text-align:center;padding:24px}
+header h1{margin:0 0 8px}
+main{max-width:550px;margin:25px auto;padding:15px}
+.card{background:white;padding:22px;border-radius:15px;margin-bottom:16px;box-shadow:0 3px 12px #0001}
+h3{margin-top:0;color:#173b67}
+input,button{width:100%;padding:13px;margin:7px 0;border-radius:9px;font-family:Tahoma;font-size:14px}
+input{border:1px solid #ccd5df}
+button{border:0;background:#1767b2;color:white;font-weight:bold}
+button.secondary{background:#53677e}
+button.danger{background:#b52c38}
 .hidden{display:none}
-.note{font-size:12px;color:#69788a;line-height:2}
-.menu{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
-.menu button{width:auto;flex:1;min-width:100px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-td,th{padding:11px;border-bottom:1px solid #e4e9ef;text-align:right}
-th{background:#edf4fb}
-footer{text-align:center;color:#8491a0;font-size:12px;padding:20px}
-@media(max-width:550px){.grid{grid-template-columns:1fr}main{margin:12px auto}.card{padding:17px}}
+.item{padding:12px;border-bottom:1px solid #ddd}
+small{color:#667}
 </style>
 </head>
 <body>
-
 <header>
 <h1>حضوربان</h1>
-<p>سامانه هوشمند حضور و غیاب کارکنان</p>
+سامانه هوشمند حضور و غیاب
 </header>
-
 <main>
 
-<section id="employeePage" class="card">
-<h2>ورود کارکنان</h2>
-<p class="note">لطفاً اطلاعات شناسایی خود را وارد کنید.</p>
-<label>نام و نام خانوادگی</label>
-<input id="employeeName" placeholder="نام و نام خانوادگی">
-<label>کد ملی</label>
-<input id="nationalCode" inputmode="numeric" maxlength="10" placeholder="کد ملی">
-<label>کد پرسنلی</label>
-<input id="personnelCode" placeholder="کد پرسنلی">
-<button onclick="employeeLogin()">ورود به سامانه</button>
-<p class="note">ثبت واقعی تردد پس از اتصال پایگاه داده و GPS فعال می‌شود.</p>
-</section>
-
-<section id="adminLogin" class="card">
-<h2>ورود مدیران</h2>
-<p class="note">برای ورود به پنل مدیریت، اطلاعات ورود را وارد کنید.</p>
-<label>نام کاربری</label>
-<input id="adminUser" placeholder="نام کاربری" autocomplete="username">
-<label>رمز عبور</label>
-<input id="adminPass" type="password" placeholder="رمز عبور" autocomplete="current-password">
-<button onclick="adminLogin()">ورود به پنل مدیریت</button>
-<p id="loginMessage" class="note"></p>
-</section>
-
-<section id="adminPage" class="hidden">
-
+<section id="home">
 <div class="card">
-<h2>پنل مدیریت حضوربان</h2>
-<div class="grid">
-<div class="stat">مدیر اول<strong>محمدرضا فیوضی</strong></div>
-<div class="stat">مدیر دوم<strong>مصطفی بشردوست</strong></div>
+<h3>ورود کارکنان</h3>
+<input id="name" placeholder="نام">
+<input id="family" placeholder="نام خانوادگی">
+<input id="national" placeholder="کد ملی">
+<input id="personnel" placeholder="کد پرسنلی">
+<button onclick="attendance('ورود')">ثبت ورود</button>
+<button class="secondary" onclick="attendance('خروج')">ثبت خروج</button>
 </div>
-<p class="note">هر دو مدیر با سطح دسترسی یکسان وارد می‌شوند.</p>
-</div>
-
 <div class="card">
-<div class="menu">
-<button onclick="showSection('dashboard')">داشبورد</button>
-<button onclick="showSection('staff')">مدیریت کارکنان</button>
-<button onclick="showSection('attendance')">گزارش تردد</button>
-<button onclick="showSection('gps')">محدوده GPS</button>
-</div>
-
-<div id="dashboard">
-<h2>داشبورد مدیریتی</h2>
-<div class="grid">
-<div class="stat">تعداد کارکنان<strong>۰</strong></div>
-<div class="stat">ورودهای امروز<strong>۰</strong></div>
-<div class="stat">خروج‌های امروز<strong>۰</strong></div>
-<div class="stat">غیبت امروز<strong>۰</strong></div>
-</div>
-<p class="note">آمار واقعی پس از اتصال پایگاه داده نمایش داده می‌شود.</p>
-</div>
-
-<div id="staff" class="hidden">
-<h2>مدیریت کارکنان</h2>
-<label>نام و نام خانوادگی</label>
-<input placeholder="نام کارمند">
-<label>کد ملی</label>
-<input placeholder="کد ملی">
-<label>کد پرسنلی</label>
-<input placeholder="کد پرسنلی">
-<label>منطقه کاری</label>
-<select>
-<option>انتخاب منطقه کاری</option>
-<option>منطقه اول</option>
-<option>منطقه دوم</option>
-<option>منطقه سوم</option>
-</select>
-<button onclick="alert('ثبت واقعی کارکنان پس از اتصال سرور فعال می‌شود.')">ثبت کارمند</button>
-</div>
-
-<div id="attendance" class="hidden">
-<h2>گزارش ورود و خروج</h2>
-<table>
-<tr><th>نام کارمند</th><th>ورود</th><th>خروج</th><th>وضعیت</th></tr>
-<tr><td colspan="4">هنوز اطلاعاتی ثبت نشده است.</td></tr>
-</table>
-</div>
-
-<div id="gps" class="hidden">
-<h2>مدیریت محدوده GPS</h2>
-<label>نام منطقه</label>
-<input placeholder="نام محل کار">
-<label>شعاع مجاز (متر)</label>
-<input type="number" placeholder="مثلاً 100">
-<button onclick="alert('تنظیم GPS پس از اتصال سرور فعال می‌شود.')">ثبت محدوده</button>
-</div>
-
-<button class="danger" onclick="adminLogout()">خروج از مدیریت</button>
+<h3>ورود مدیریت</h3>
+<button onclick="show('login')">ورود به پنل مدیریت</button>
 </div>
 </section>
 
+<section id="login" class="hidden">
 <div class="card">
-<h2>امکانات نسخه نهایی</h2>
-<ul class="note">
-<li>احراز هویت کارکنان</li>
-<li>ثبت ورود و خروج با GPS</li>
-<li>تعیین محدوده مجاز هر کارمند</li>
-<li>دو مدیر با دسترسی یکسان</li>
-<li>گزارش تأخیر، غیبت و اضافه‌کاری</li>
-<li>مدیریت کارکنان و خروجی گزارش‌ها</li>
-</ul>
+<h3>ورود مدیر</h3>
+<input id="username" placeholder="نام کاربری">
+<input id="password" type="password" placeholder="رمز عبور">
+<button onclick="adminLogin()">ورود</button>
+<button class="secondary" onclick="show('home')">بازگشت</button>
+<p id="error"></p>
 </div>
+</section>
+
+<section id="admin" class="hidden">
+<div class="card">
+<h3>پنل مدیریت حضوربان</h3>
+<button onclick="show('home')">صفحه اصلی</button>
+<button class="secondary" onclick="show('employees')">مدیریت کارکنان</button>
+<button class="secondary" onclick="show('reports')">گزارش تردد</button>
+<button class="danger" onclick="logout()">خروج مدیر</button>
+</div>
+</section>
+
+<section id="employees" class="hidden">
+<div class="card">
+<h3>افزودن کارمند</h3>
+<input id="newname" placeholder="نام">
+<input id="newfamily" placeholder="نام خانوادگی">
+<input id="newnational" placeholder="کد ملی">
+<input id="newpersonnel" placeholder="کد پرسنلی">
+<button onclick="addEmployee()">ثبت کارمند</button>
+<div id="employeeList"></div>
+<button class="secondary" onclick="show('admin')">بازگشت</button>
+</div>
+</section>
+
+<section id="reports" class="hidden">
+<div class="card">
+<h3>گزارش تردد کارکنان</h3>
+<div id="reportList"></div>
+<button class="secondary" onclick="show('admin')">بازگشت</button>
+</div>
+</section>
 
 </main>
-
-<footer>حضوربان | سامانه هوشمند حضور و غیاب</footer>
-
 <script>
+const get=(k)=>JSON.parse(localStorage.getItem(k)||'[]');
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 
-// ورود آزمایشی مدیران
-const ADMIN_USERNAME = "684281";
-const ADMIN_PASSWORD = "رمز_مدیر_را_اینجا_قرار_دهید";
-
-function employeeLogin(){
-alert('سامانه هنوز به پایگاه داده و سیستم احراز هویت متصل نشده است.');
+function show(id){
+document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
+document.getElementById(id).classList.remove('hidden');
+if(id==='employees') renderEmployees();
+if(id==='reports') renderReports();
 }
 
 function adminLogin(){
-const user = document.getElementById('adminUser').value.trim();
-const pass = document.getElementById('adminPass').value;
-
-if(user === ADMIN_USERNAME && pass === ADMIN_PASSWORD){
-document.getElementById('adminLogin').classList.add('hidden');
-document.getElementById('employeePage').classList.add('hidden');
-document.getElementById('adminPage').classList.remove('hidden');
-document.getElementById('loginMessage').innerText='';
-document.getElementById('adminPage').scrollIntoView({behavior:'smooth'});
+if(username.value==='684281' && password.value==='Fm21101372'){
+show('admin');
 }else{
-document.getElementById('loginMessage').innerText='نام کاربری یا رمز عبور اشتباه است.';
+error.innerText='نام کاربری یا رمز عبور اشتباه است';
 }
 }
 
-function adminLogout(){
-document.getElementById('adminPage').classList.add('hidden');
-document.getElementById('adminLogin').classList.remove('hidden');
-document.getElementById('employeePage').classList.remove('hidden');
-document.getElementById('adminUser').value='';
-document.getElementById('adminPass').value='';
-window.scrollTo({top:0,behavior:'smooth'});
+function logout(){show('home')}
+
+function addEmployee(){
+let e={
+name:newname.value.trim(),
+family:newfamily.value.trim(),
+national:newnational.value.trim(),
+personnel:newpersonnel.value.trim()
+};
+if(!e.name||!e.family||!e.national||!e.personnel){
+alert('همه اطلاعات را وارد کنید');return;
+}
+let list=get('employees');
+if(list.some(x=>x.personnel===e.personnel)){
+alert('این کارمند قبلاً ثبت شده است');return;
+}
+list.push(e);save('employees',list);
+newname.value=newfamily.value=newnational.value=newpersonnel.value='';
+renderEmployees();
+alert('کارمند ثبت شد');
 }
 
-function showSection(id){
-['dashboard','staff','attendance','gps'].forEach(x=>{
-document.getElementById(x).classList.add('hidden');
-});
-document.getElementById(id).classList.remove('hidden');
+function renderEmployees(){
+let list=get('employees');
+employeeList.innerHTML=list.map(e=>
+`<div class="item">${e.name} ${e.family}<br><small>کد پرسنلی: ${e.personnel}</small></div>`
+).join('')||'هنوز کارمندی ثبت نشده است';
 }
 
+function attendance(type){
+let p=personnel.value.trim();
+let n=name.value.trim(), f=family.value.trim(), c=national.value.trim();
+if(!n||!f||!c||!p){alert('لطفاً همه اطلاعات را وارد کنید');return;}
+let employee=get('employees').find(e=>
+e.name===n&&e.family===f&&e.national===c&&e.personnel===p
+);
+if(!employee){alert('اطلاعات شما در فهرست کارکنان ثبت نشده است');return;}
+let records=get('records');
+records.push({name:n+' '+f,type:type,time:new Date().toLocaleString('fa-IR')});
+save('records',records);
+alert('ثبت '+type+' با موفقیت انجام شد');
+}
+
+function renderReports(){
+let list=get('records');
+reportList.innerHTML=list.slice().reverse().map(r=>
+`<div class="item">${r.name}<br>${r.type}<br><small>${r.time}</small></div>`
+).join('')||'هنوز ترددی ثبت نشده است';
+}
 </script>
 </body>
 </html>
