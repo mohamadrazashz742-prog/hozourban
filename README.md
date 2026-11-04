@@ -20,7 +20,7 @@ button.secondary{background:#e7eef6;color:#173e68}
 button.danger{background:#a93636}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .stat{background:#edf4fb;border-radius:10px;padding:16px;text-align:center}
-.stat strong{display:block;font-size:23px;color:#155b96;margin-top:8px}
+.stat strong{display:block;font-size:20px;color:#155b96;margin-top:8px}
 .hidden{display:none}
 .note{font-size:12px;color:#69788a;line-height:2}
 .menu{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
@@ -44,41 +44,36 @@ footer{text-align:center;color:#8491a0;font-size:12px;padding:20px}
 <section id="employeePage" class="card">
 <h2>ورود کارکنان</h2>
 <p class="note">لطفاً اطلاعات شناسایی خود را وارد کنید.</p>
-
 <label>نام و نام خانوادگی</label>
 <input id="employeeName" placeholder="نام و نام خانوادگی">
-
 <label>کد ملی</label>
 <input id="nationalCode" inputmode="numeric" maxlength="10" placeholder="کد ملی">
-
 <label>کد پرسنلی</label>
 <input id="personnelCode" placeholder="کد پرسنلی">
-
 <button onclick="employeeLogin()">ورود به سامانه</button>
-
-<p class="note">
-ثبت واقعی ورود و خروج پس از راه‌اندازی پایگاه داده، احراز هویت و کنترل GPS فعال خواهد شد.
-</p>
+<p class="note">ثبت واقعی تردد پس از اتصال پایگاه داده و GPS فعال می‌شود.</p>
 </section>
 
-<section class="card">
-<h2>مدیریت سامانه</h2>
-<p class="note">
-پیش‌نمایش محیط مدیریتی حضوربان. این بخش فعلاً نمایشی است و ورود امن مدیران هنوز به سرور متصل نشده است.
-</p>
-<button onclick="showAdmin()">مشاهده پنل مدیریت</button>
+<section id="adminLogin" class="card">
+<h2>ورود مدیران</h2>
+<p class="note">برای ورود به پنل مدیریت، اطلاعات ورود را وارد کنید.</p>
+<label>نام کاربری</label>
+<input id="adminUser" placeholder="نام کاربری" autocomplete="username">
+<label>رمز عبور</label>
+<input id="adminPass" type="password" placeholder="رمز عبور" autocomplete="current-password">
+<button onclick="adminLogin()">ورود به پنل مدیریت</button>
+<p id="loginMessage" class="note"></p>
 </section>
 
 <section id="adminPage" class="hidden">
 
 <div class="card">
 <h2>پنل مدیریت حضوربان</h2>
-<p>مدیران تعریف‌شده در سامانه:</p>
 <div class="grid">
 <div class="stat">مدیر اول<strong>محمدرضا فیوضی</strong></div>
 <div class="stat">مدیر دوم<strong>مصطفی بشردوست</strong></div>
 </div>
-<p class="note">هر دو مدیر باید در نسخه نهایی حساب مستقل و سطح دسترسی یکسان داشته باشند.</p>
+<p class="note">هر دو مدیر با سطح دسترسی یکسان وارد می‌شوند.</p>
 </div>
 
 <div class="card">
@@ -97,12 +92,11 @@ footer{text-align:center;color:#8491a0;font-size:12px;padding:20px}
 <div class="stat">خروج‌های امروز<strong>۰</strong></div>
 <div class="stat">غیبت امروز<strong>۰</strong></div>
 </div>
-<p class="note">آمار واقعی پس از اتصال پایگاه داده نمایش داده خواهد شد.</p>
+<p class="note">آمار واقعی پس از اتصال پایگاه داده نمایش داده می‌شود.</p>
 </div>
 
 <div id="staff" class="hidden">
 <h2>مدیریت کارکنان</h2>
-<p class="note">فرم ثبت اولیه کارکنان در نسخه نهایی به پایگاه داده متصل می‌شود.</p>
 <label>نام و نام خانوادگی</label>
 <input placeholder="نام کارمند">
 <label>کد ملی</label>
@@ -129,27 +123,26 @@ footer{text-align:center;color:#8491a0;font-size:12px;padding:20px}
 
 <div id="gps" class="hidden">
 <h2>مدیریت محدوده GPS</h2>
-<p class="note">در نسخه نهایی برای هر کارمند محدوده جغرافیایی اختصاصی تعیین خواهد شد.</p>
 <label>نام منطقه</label>
 <input placeholder="نام محل کار">
 <label>شعاع مجاز (متر)</label>
 <input type="number" placeholder="مثلاً 100">
-<button onclick="alert('تنظیم واقعی GPS نیازمند اتصال سرور و ذخیره مختصات است.')">ثبت محدوده</button>
+<button onclick="alert('تنظیم GPS پس از اتصال سرور فعال می‌شود.')">ثبت محدوده</button>
 </div>
 
-<button class="secondary" onclick="hideAdmin()">بازگشت به صفحه کارکنان</button>
+<button class="danger" onclick="adminLogout()">خروج از مدیریت</button>
 </div>
 </section>
 
 <div class="card">
 <h2>امکانات نسخه نهایی</h2>
 <ul class="note">
-<li>احراز هویت کارکنان با اطلاعات پرسنلی</li>
+<li>احراز هویت کارکنان</li>
 <li>ثبت ورود و خروج با GPS</li>
-<li>تعیین محدوده مجاز برای هر کارمند</li>
-<li>دو حساب مدیریتی مستقل</li>
+<li>تعیین محدوده مجاز هر کارمند</li>
+<li>دو مدیر با دسترسی یکسان</li>
 <li>گزارش تأخیر، غیبت و اضافه‌کاری</li>
-<li>خروجی گزارش‌ها و مدیریت پرسنل</li>
+<li>مدیریت کارکنان و خروجی گزارش‌ها</li>
 </ul>
 </div>
 
@@ -158,23 +151,46 @@ footer{text-align:center;color:#8491a0;font-size:12px;padding:20px}
 <footer>حضوربان | سامانه هوشمند حضور و غیاب</footer>
 
 <script>
+
+// ورود آزمایشی مدیران
+const ADMIN_USERNAME = "684281";
+const ADMIN_PASSWORD = "رمز_مدیر_را_اینجا_قرار_دهید";
+
 function employeeLogin(){
 alert('سامانه هنوز به پایگاه داده و سیستم احراز هویت متصل نشده است.');
 }
-function showAdmin(){
+
+function adminLogin(){
+const user = document.getElementById('adminUser').value.trim();
+const pass = document.getElementById('adminPass').value;
+
+if(user === ADMIN_USERNAME && pass === ADMIN_PASSWORD){
+document.getElementById('adminLogin').classList.add('hidden');
+document.getElementById('employeePage').classList.add('hidden');
 document.getElementById('adminPage').classList.remove('hidden');
+document.getElementById('loginMessage').innerText='';
 document.getElementById('adminPage').scrollIntoView({behavior:'smooth'});
+}else{
+document.getElementById('loginMessage').innerText='نام کاربری یا رمز عبور اشتباه است.';
 }
-function hideAdmin(){
+}
+
+function adminLogout(){
 document.getElementById('adminPage').classList.add('hidden');
+document.getElementById('adminLogin').classList.remove('hidden');
+document.getElementById('employeePage').classList.remove('hidden');
+document.getElementById('adminUser').value='';
+document.getElementById('adminPass').value='';
 window.scrollTo({top:0,behavior:'smooth'});
 }
+
 function showSection(id){
 ['dashboard','staff','attendance','gps'].forEach(x=>{
 document.getElementById(x).classList.add('hidden');
 });
 document.getElementById(id).classList.remove('hidden');
 }
+
 </script>
 </body>
 </html>
