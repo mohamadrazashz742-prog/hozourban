@@ -1,316 +1,159 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>حضوربان | سامانه هوشمند حضور و غیاب</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>حضوربان</title>
 <style>
 *{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:Tahoma,Arial,sans-serif;
-background:#eef2f7;
-color:#243247;
-}
-
-header{
-background:#123b68;
-color:white;
-padding:22px;
-text-align:center;
-}
-
-header h1{margin:0;font-size:27px}
-header p{margin:8px 0 0;color:#d6e6f8}
-
-.container{
-max-width:520px;
-margin:25px auto;
-padding:15px;
-}
-
-.card{
-background:white;
-padding:22px;
-border-radius:16px;
-box-shadow:0 4px 18px #00000010;
-margin-bottom:18px;
-}
-
-h2{
-font-size:19px;
-color:#123b68;
-margin-top:0;
-}
-
-label{
-display:block;
-margin:13px 0 7px;
-font-size:14px;
-}
-
-input{
-width:100%;
-padding:13px;
-border:1px solid #d5dce5;
-border-radius:9px;
-font-family:Tahoma;
-font-size:14px;
-}
-
-button{
-width:100%;
-border:0;
-border-radius:9px;
-padding:14px;
-font-family:Tahoma;
-font-size:15px;
-font-weight:bold;
-cursor:pointer;
-margin-top:12px;
-background:#1769aa;
-color:white;
-}
-
-button:active{opacity:.8}
-
-.green{background:#16834c}
-.red{background:#c43c3c}
-.gray{background:#64748b}
-
-.menu{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-.menu button{
-background:#e9f1fa;
-color:#123b68;
-}
-
-.info{
-background:#f0f5fb;
-padding:13px;
-border-radius:9px;
-margin:10px 0;
-font-size:14px;
-}
-
+body{margin:0;background:#eef2f7;font-family:Tahoma;color:#263449}
+header{background:#173b67;color:white;text-align:center;padding:22px}
+main{max-width:550px;margin:20px auto;padding:14px}
+.card{background:white;padding:20px;border-radius:14px;margin-bottom:15px;box-shadow:0 3px 12px #0001}
+h3{color:#173b67;margin-top:0}
+input,button{width:100%;padding:13px;margin:7px 0;border-radius:8px;font-family:Tahoma;font-size:14px}
+input{border:1px solid #ccd5df}
+button{border:0;background:#1767b2;color:white;font-weight:bold}
+.secondary{background:#53677e}
+.danger{background:#b52c38}
 .hidden{display:none}
-
-footer{
-text-align:center;
-color:#7b8796;
-font-size:12px;
-padding:20px;
-}
+.item{padding:12px;border-bottom:1px solid #ddd}
+small{color:#667}
 </style>
 </head>
-
 <body>
-
 <header>
 <h1>حضوربان</h1>
-<p>سامانه هوشمند حضور و غیاب کارکنان</p>
+سامانه هوشمند حضور و غیاب
 </header>
-
-<div class="container">
-
-<div class="card" id="login">
-<h2>ورود کارکنان</h2>
-
-<label>نام</label>
-<input id="first" placeholder="نام خود را وارد کنید">
-
-<label>نام خانوادگی</label>
-<input id="last" placeholder="نام خانوادگی">
-
-<label>کد ملی</label>
-<input id="national" maxlength="10" inputmode="numeric" placeholder="کد ملی">
-
-<label>کد پرسنلی</label>
+<main>
+<section id="home">
+<div class="card">
+<h3>ورود کارکنان</h3>
+<input id="name" placeholder="نام">
+<input id="family" placeholder="نام خانوادگی">
+<input id="national" placeholder="کد ملی">
 <input id="personnel" placeholder="کد پرسنلی">
-
-<button onclick="loginUser()">ورود به سامانه</button>
+<button onclick="attendance('ورود')">ثبت ورود</button>
+<button class="secondary" onclick="attendance('خروج')">ثبت خروج</button>
 </div>
-
-<div class="hidden" id="dashboard">
-
 <div class="card">
-<h2>خوش آمدید</h2>
-<div class="info" id="welcome"></div>
-<div class="info" id="date"></div>
+<h3>مدیریت سامانه</h3>
+<button onclick="show('login')">ورود به پنل مدیریت</button>
 </div>
+</section>
 
+<section id="login" class="hidden">
 <div class="card">
-<h2>منوی اصلی</h2>
-
-<div class="menu">
-<button onclick="showSection('attendance')">ثبت تردد</button>
-<button onclick="showSection('location')">موقعیت مکانی</button>
-<button onclick="showSection('profile')">اطلاعات پرسنلی</button>
-<button onclick="showSection('settings')">تنظیمات</button>
+<h3>ورود مدیر</h3>
+<input id="username" placeholder="نام کاربری">
+<input id="password" type="password" placeholder="رمز عبور">
+<button onclick="adminLogin()">ورود</button>
+<button class="secondary" onclick="show('home')">بازگشت</button>
+<p id="error"></p>
 </div>
+</section>
+
+<section id="admin" class="hidden">
+<div class="card">
+<h3>پنل مدیریت حضوربان</h3>
+<button onclick="show('employees')">مدیریت کارکنان</button>
+<button onclick="show('reports')">گزارش تردد</button>
+<button class="danger" onclick="logout()">خروج</button>
 </div>
+</section>
 
-<div class="card" id="attendance">
-<h2>ثبت ورود و خروج</h2>
-
-<div class="info" id="status">وضعیت: آماده ثبت تردد</div>
-
-<button class="green" onclick="record('ورود')">ثبت ورود</button>
-<button class="red" onclick="record('خروج')">ثبت خروج</button>
-
-<div class="info" id="records">هنوز ترددی ثبت نشده است.</div>
+<section id="employees" class="hidden">
+<div class="card">
+<h3>افزودن کارمند</h3>
+<input id="newname" placeholder="نام">
+<input id="newfamily" placeholder="نام خانوادگی">
+<input id="newnational" placeholder="کد ملی">
+<input id="newpersonnel" placeholder="کد پرسنلی">
+<button onclick="addEmployee()">ثبت کارمند</button>
+<div id="employeeList"></div>
+<button class="secondary" onclick="show('admin')">بازگشت</button>
 </div>
+</section>
 
-<div class="card hidden" id="location">
-<h2>موقعیت مکانی</h2>
-<div class="info" id="gps">موقعیت مکانی هنوز بررسی نشده است.</div>
-<button onclick="getLocation()">بررسی موقعیت مکانی</button>
+<section id="reports" class="hidden">
+<div class="card">
+<h3>گزارش تردد کارکنان</h3>
+<div id="reportList"></div>
+<button class="secondary" onclick="show('admin')">بازگشت</button>
 </div>
-
-<div class="card hidden" id="profile">
-<h2>اطلاعات پرسنلی</h2>
-<div class="info" id="profileInfo"></div>
-</div>
-
-<div class="card hidden" id="settings">
-<h2>تنظیمات</h2>
-<div class="info">زبان سامانه: فارسی</div>
-<div class="info">چیدمان: راست‌چین</div>
-<button class="gray" onclick="logout()">خروج از حساب کاربری</button>
-</div>
-
-<button class="gray" onclick="logout()">خروج از سامانه</button>
-
-</div>
-
-</div>
-
-<footer>
-حضوربان | سامانه هوشمند مدیریت تردد کارکنان
-</footer>
+</section>
+</main>
 
 <script>
+const get=k=>JSON.parse(localStorage.getItem(k)||'[]');
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 
-let employee={};
-
-function loginUser(){
-
-let first=document.getElementById("first").value.trim();
-let last=document.getElementById("last").value.trim();
-let national=document.getElementById("national").value.trim();
-let personnel=document.getElementById("personnel").value.trim();
-
-if(!first || !last || !national || !personnel){
-alert("لطفاً تمام اطلاعات را وارد کنید.");
-return;
+function show(id){
+document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
+document.getElementById(id).classList.remove('hidden');
+if(id==='employees')renderEmployees();
+if(id==='reports')renderReports();
 }
 
-if(!/^\d{10}$/.test(national)){
-alert("کد ملی باید ۱۰ رقم باشد.");
-return;
+function adminLogin(){
+if(document.getElementById('username').value==='684281' &&
+document.getElementById('password').value==='Fm21101372'){
+show('admin');
+}else{
+document.getElementById('error').innerText='نام کاربری یا رمز عبور اشتباه است';
+}
 }
 
-employee={first,last,national,personnel};
+function logout(){show('home')}
 
-document.getElementById("login").classList.add("hidden");
-document.getElementById("dashboard").classList.remove("hidden");
-
-document.getElementById("welcome").innerText=
-"کاربر: "+first+" "+last;
-
-document.getElementById("profileInfo").innerText=
-"نام: "+first+" "+last+
-"\nکد ملی: "+national+
-"\nکد پرسنلی: "+personnel;
-
-updateDate();
-
+function addEmployee(){
+let e={
+name:document.getElementById('newname').value.trim(),
+family:document.getElementById('newfamily').value.trim(),
+national:document.getElementById('newnational').value.trim(),
+personnel:document.getElementById('newpersonnel').value.trim()
+};
+if(!e.name||!e.family||!e.national||!e.personnel){
+alert('همه اطلاعات را وارد کنید');return;
+}
+let list=get('employees');
+if(list.some(x=>x.personnel===e.personnel)){
+alert('این کد پرسنلی قبلاً ثبت شده');return;
+}
+list.push(e);save('employees',list);
+['newname','newfamily','newnational','newpersonnel'].forEach(id=>document.getElementById(id).value='');
+renderEmployees();alert('کارمند ثبت شد');
 }
 
-function updateDate(){
-
-document.getElementById("date").innerText=
-"تاریخ و ساعت: "+
-new Date().toLocaleString("fa-IR");
-
+function renderEmployees(){
+let list=get('employees');
+document.getElementById('employeeList').innerHTML=list.map(e=>
+`<div class="item">${e.name} ${e.family}<br><small>کد پرسنلی: ${e.personnel}</small></div>`
+).join('')||'هنوز کارمندی ثبت نشده است';
 }
 
-function showSection(id){
-
-["attendance","location","profile","settings"].forEach(x=>{
-document.getElementById(x).classList.add("hidden");
-});
-
-document.getElementById(id).classList.remove("hidden");
-
+function attendance(type){
+let n=document.getElementById('name').value.trim();
+let f=document.getElementById('family').value.trim();
+let c=document.getElementById('national').value.trim();
+let p=document.getElementById('personnel').value.trim();
+if(!n||!f||!c||!p){alert('همه اطلاعات را وارد کنید');return;}
+let employee=get('employees').find(e=>e.name===n&&e.family===f&&e.national===c&&e.personnel===p);
+if(!employee){alert('اطلاعات شما در فهرست کارکنان ثبت نشده است');return;}
+let records=get('records');
+records.push({name:n+' '+f,type:type,time:new Date().toLocaleString('fa-IR')});
+save('records',records);
+alert('ثبت '+type+' با موفقیت انجام شد');
 }
 
-function record(type){
-
-if(!employee.first){
-alert("ابتدا وارد سامانه شوید.");
-return;
+function renderReports(){
+let list=get('records');
+document.getElementById('reportList').innerHTML=list.slice().reverse().map(r=>
+`<div class="item">${r.name}<br>${r.type}<br><small>${r.time}</small></div>`
+).join('')||'هنوز ترددی ثبت نشده است';
 }
-
-let time=new Date().toLocaleString("fa-IR");
-
-document.getElementById("status").innerText=
-"آخرین تردد: "+type+" در "+time;
-
-document.getElementById("records").innerText=
-"آخرین عملیات ثبت‌شده: "+type+" - "+time;
-
-}
-
-function getLocation(){
-
-let gps=document.getElementById("gps");
-
-if(!navigator.geolocation){
-gps.innerText="امکان بررسی موقعیت مکانی وجود ندارد.";
-return;
-}
-
-gps.innerText="در حال بررسی موقعیت مکانی...";
-
-navigator.geolocation.getCurrentPosition(
-
-position=>{
-gps.innerText=
-"موقعیت دریافت شد.\n"+
-"عرض جغرافیایی: "+position.coords.latitude+
-"\nطول جغرافیایی: "+position.coords.longitude;
-},
-
-()=>{
-gps.innerText="دریافت موقعیت ناموفق بود. دسترسی GPS را بررسی کنید.";
-},
-
-{enableHighAccuracy:true,timeout:15000}
-);
-
-}
-
-function logout(){
-
-employee={};
-
-document.getElementById("dashboard").classList.add("hidden");
-document.getElementById("login").classList.remove("hidden");
-
-["first","last","national","personnel"].forEach(id=>{
-document.getElementById(id).value="";
-});
-
-}
-
 </script>
-
 </body>
-  </html>
+</html>
