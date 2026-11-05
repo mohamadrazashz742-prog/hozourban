@@ -5,6 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>حضوربان</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#eef2f7;font-family:Tahoma;color:#263449}
@@ -14,30 +17,43 @@ main{max-width:550px;margin:20px auto;padding:14px}
 h3{color:#173b67;margin-top:0}
 input,button{width:100%;padding:13px;margin:7px 0;border-radius:8px;font-family:Tahoma;font-size:14px}
 input{border:1px solid #ccd5df}
-button{border:0;background:#1767b2;color:white;font-weight:bold}
+button{border:0;background:#1767b2;color:white;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
 .secondary{background:#53677e}
 .danger{background:#b52c38}
 .hidden{display:none}
 .item{padding:12px;border-bottom:1px solid #ddd}
 small{color:#667}
+#map{height:350px;width:100%;border-radius:10px;margin:12px 0;z-index:1}
+.info{background:#eaf3ff;padding:12px;border-radius:8px;line-height:2;font-size:13px}
+.success{color:green}
 </style>
 </head>
+
 <body>
+
 <header>
 <h1>حضوربان</h1>
 سامانه هوشمند حضور و غیاب
 </header>
+
 <main>
+
 <section id="home">
 <div class="card">
 <h3>ورود کارکنان</h3>
+
 <input id="name" placeholder="نام">
 <input id="family" placeholder="نام خانوادگی">
 <input id="national" placeholder="کد ملی">
 <input id="personnel" placeholder="کد پرسنلی">
-<button onclick="attendance('ورود')">ثبت ورود</button>
-<button class="secondary" onclick="attendance('خروج')">ثبت خروج</button>
+
+<button id="enterBtn" onclick="attendance('ورود')">ثبت ورود</button>
+<button id="exitBtn" class="secondary" onclick="attendance('خروج')">ثبت خروج</button>
+
+<p class="info">برای ثبت تردد، اطلاعات شما بررسی و موقعیت GPS گوشی کنترل می‌شود.</p>
 </div>
+
 <div class="card">
 <h3>مدیریت سامانه</h3>
 <button onclick="show('login')">ورود به پنل مدیریت</button>
@@ -60,19 +76,51 @@ small{color:#667}
 <h3>پنل مدیریت حضوربان</h3>
 <button onclick="show('employees')">مدیریت کارکنان</button>
 <button onclick="show('reports')">گزارش تردد</button>
+<button onclick="show('location')">تنظیم موقعیت محل کار (GPS)</button>
 <button class="danger" onclick="logout()">خروج</button>
+</div>
+</section>
+
+<section id="location" class="hidden">
+<div class="card">
+<h3>تنظیم موقعیت محل کار</h3>
+
+<div class="info">
+موقعیت محل کار را روی نقشه انتخاب کنید.
+شعاع مجاز ثبت تردد ثابت و برابر ۱۵۰ متر است.
+</div>
+
+<div id="map"></div>
+
+<p id="selectedLocation">هنوز موقعیتی انتخاب نشده است.</p>
+
+<button class="secondary" onclick="locateManager()">استفاده از موقعیت فعلی من</button>
+
+<button onclick="saveLocation()">ذخیره موقعیت محل کار</button>
+
+<div class="info">
+شعاع مجاز: <b>۱۵۰ متر</b>
+<br>
+ثبت ورود و خروج خارج از این محدوده امکان‌پذیر نیست.
+</div>
+
+<button class="secondary" onclick="show('admin')">بازگشت</button>
 </div>
 </section>
 
 <section id="employees" class="hidden">
 <div class="card">
 <h3>افزودن کارمند</h3>
+
 <input id="newname" placeholder="نام">
 <input id="newfamily" placeholder="نام خانوادگی">
 <input id="newnational" placeholder="کد ملی">
 <input id="newpersonnel" placeholder="کد پرسنلی">
+
 <button onclick="addEmployee()">ثبت کارمند</button>
+
 <div id="employeeList"></div>
+
 <button class="secondary" onclick="show('admin')">بازگشت</button>
 </div>
 </section>
@@ -80,80 +128,358 @@ small{color:#667}
 <section id="reports" class="hidden">
 <div class="card">
 <h3>گزارش تردد کارکنان</h3>
+
 <div id="reportList"></div>
+
 <button class="secondary" onclick="show('admin')">بازگشت</button>
 </div>
 </section>
+
 </main>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
+
+const RADIUS=150;
+
 const get=k=>JSON.parse(localStorage.getItem(k)||'[]');
 const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 
+let map=null;
+let marker=null;
+let circle=null;
+let selectedLat=null;
+let selectedLng=null;
+
 function show(id){
+
 document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
+
 document.getElementById(id).classList.remove('hidden');
+
 if(id==='employees')renderEmployees();
 if(id==='reports')renderReports();
+
+if(id==='location'){
+setTimeout(initMap,300);
+}
+
 }
 
 function adminLogin(){
-if(document.getElementById('username').value==='684281' &&
-document.getElementById('password').value==='Fm21101372'){
+
+if(
+document.getElementById('username').value==='684281' &&
+document.getElementById('password').value==='Fm21101372'
+){
 show('admin');
 }else{
 document.getElementById('error').innerText='نام کاربری یا رمز عبور اشتباه است';
 }
+
 }
 
-function logout(){show('home')}
+function logout(){
+show('home');
+}
+
+function initMap(){
+
+if(!window.L){
+alert('نقشه بارگذاری نشده است. اینترنت را بررسی کنید.');
+return;
+}
+
+let saved=getLocation();
+
+if(map){
+map.invalidateSize();
+}else{
+
+map=L.map('map').setView([32,53],5);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+attribution:'© OpenStreetMap'
+}).addTo(map);
+
+map.on('click',function(e){
+selectLocation(e.latlng.lat,e.latlng.lng);
+});
+
+}
+
+if(saved){
+selectLocation(saved.lat,saved.lng,false);
+map.setView([saved.lat,saved.lng],17);
+}
+
+}
+
+function selectLocation(lat,lng,move=true){
+
+selectedLat=lat;
+selectedLng=lng;
+
+if(!map)return;
+
+if(marker)map.removeLayer(marker);
+if(circle)map.removeLayer(circle);
+
+marker=L.marker([lat,lng]).addTo(map);
+
+circle=L.circle([lat,lng],{
+radius:RADIUS,
+color:'#1767b2',
+fillColor:'#3388ff',
+fillOpacity:0.15
+}).addTo(map);
+
+document.getElementById('selectedLocation').innerText=
+'عرض جغرافیایی: '+lat.toFixed(6)+
+' | طول جغرافیایی: '+lng.toFixed(6);
+
+if(move)map.setView([lat,lng],17);
+
+}
+
+function locateManager(){
+
+if(!navigator.geolocation){
+alert('GPS گوشی پشتیبانی نمی‌شود');
+return;
+}
+
+navigator.geolocation.getCurrentPosition(
+pos=>{
+selectLocation(pos.coords.latitude,pos.coords.longitude);
+},
+err=>{
+alert('دریافت موقعیت انجام نشد. دسترسی GPS را بررسی کنید.');
+},
+{enableHighAccuracy:true,timeout:20000}
+);
+
+}
+
+function getLocation(){
+return JSON.parse(localStorage.getItem('workLocation')||'null');
+}
+
+function saveLocation(){
+
+if(selectedLat===null||selectedLng===null){
+alert('ابتدا محل کار را روی نقشه انتخاب کنید');
+return;
+}
+
+save('workLocation',{
+lat:selectedLat,
+lng:selectedLng,
+radius:RADIUS
+});
+
+alert('موقعیت محل کار با موفقیت ذخیره شد');
+
+}
 
 function addEmployee(){
+
 let e={
 name:document.getElementById('newname').value.trim(),
 family:document.getElementById('newfamily').value.trim(),
 national:document.getElementById('newnational').value.trim(),
 personnel:document.getElementById('newpersonnel').value.trim()
 };
+
 if(!e.name||!e.family||!e.national||!e.personnel){
-alert('همه اطلاعات را وارد کنید');return;
+alert('همه اطلاعات را وارد کنید');
+return;
 }
+
 let list=get('employees');
+
 if(list.some(x=>x.personnel===e.personnel)){
-alert('این کد پرسنلی قبلاً ثبت شده');return;
+alert('این کد پرسنلی قبلاً ثبت شده');
+return;
 }
-list.push(e);save('employees',list);
-['newname','newfamily','newnational','newpersonnel'].forEach(id=>document.getElementById(id).value='');
-renderEmployees();alert('کارمند ثبت شد');
+
+list.push(e);
+save('employees',list);
+
+['newname','newfamily','newnational','newpersonnel'].forEach(id=>{
+document.getElementById(id).value='';
+});
+
+renderEmployees();
+alert('کارمند ثبت شد');
+
 }
 
 function renderEmployees(){
+
 let list=get('employees');
-document.getElementById('employeeList').innerHTML=list.map(e=>
-`<div class="item">${e.name} ${e.family}<br><small>کد پرسنلی: ${e.personnel}</small></div>`
+
+document.getElementById('employeeList').innerHTML=
+list.map(e=>
+`<div class="item">
+${e.name} ${e.family}
+<br><small>کد پرسنلی: ${e.personnel}</small>
+</div>`
 ).join('')||'هنوز کارمندی ثبت نشده است';
+
+}
+
+function distance(lat1,lon1,lat2,lon2){
+
+const rad=x=>x*Math.PI/180;
+const R=6371000;
+
+let dLat=rad(lat2-lat1);
+let dLon=rad(lon2-lon1);
+
+let a=
+Math.sin(dLat/2)**2+
+Math.cos(rad(lat1))*Math.cos(rad(lat2))*
+Math.sin(dLon/2)**2;
+
+return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+
 }
 
 function attendance(type){
+
 let n=document.getElementById('name').value.trim();
 let f=document.getElementById('family').value.trim();
 let c=document.getElementById('national').value.trim();
 let p=document.getElementById('personnel').value.trim();
-if(!n||!f||!c||!p){alert('همه اطلاعات را وارد کنید');return;}
-let employee=get('employees').find(e=>e.name===n&&e.family===f&&e.national===c&&e.personnel===p);
-if(!employee){alert('اطلاعات شما در فهرست کارکنان ثبت نشده است');return;}
+
+if(!n||!f||!c||!p){
+alert('همه اطلاعات را وارد کنید');
+return;
+}
+
+let employee=get('employees').find(e=>
+e.name===n&&
+e.family===f&&
+e.national===c&&
+e.personnel===p
+);
+
+if(!employee){
+alert('اطلاعات شما در فهرست کارکنان ثبت نشده است');
+return;
+}
+
+let work=getLocation();
+
+if(!work){
+alert('موقعیت محل کار هنوز توسط مدیر تنظیم نشده است');
+return;
+}
+
+if(!navigator.geolocation){
+alert('GPS گوشی پشتیبانی نمی‌شود');
+return;
+}
+
+let enter=document.getElementById('enterBtn');
+let exit=document.getElementById('exitBtn');
+
+enter.disabled=true;
+exit.disabled=true;
+
+navigator.geolocation.getCurrentPosition(
+
+pos=>{
+
+let lat=pos.coords.latitude;
+let lng=pos.coords.longitude;
+let accuracy=pos.coords.accuracy;
+
+let dist=distance(lat,lng,work.lat,work.lng);
+
+if(accuracy>150){
+alert('دقت GPS کافی نیست. لطفاً در فضای باز دوباره امتحان کنید.');
+enter.disabled=false;
+exit.disabled=false;
+return;
+}
+
+if(dist>RADIUS){
+alert('ثبت تردد امکان‌پذیر نیست. شما خارج از محدوده ۱۵۰ متری محل کار هستید.');
+enter.disabled=false;
+exit.disabled=false;
+return;
+}
+
 let records=get('records');
-records.push({name:n+' '+f,type:type,time:new Date().toLocaleString('fa-IR')});
+
+records.push({
+name:n+' '+f,
+personnel:p,
+type:type,
+time:new Date().toLocaleString('fa-IR'),
+distance:Math.round(dist),
+accuracy:Math.round(accuracy)
+});
+
 save('records',records);
+
 alert('ثبت '+type+' با موفقیت انجام شد');
+
+['name','family','national','personnel'].forEach(id=>{
+document.getElementById(id).value='';
+});
+
+enter.disabled=false;
+exit.disabled=false;
+
+},
+
+err=>{
+
+let message='دریافت موقعیت GPS ناموفق بود.';
+
+if(err.code===1)message='دسترسی GPS داده نشده است.';
+if(err.code===2)message='موقعیت GPS در دسترس نیست.';
+if(err.code===3)message='زمان دریافت GPS تمام شد. دوباره تلاش کنید.';
+
+alert(message);
+
+enter.disabled=false;
+exit.disabled=false;
+
+},
+
+{
+enableHighAccuracy:true,
+timeout:20000,
+maximumAge:0
+}
+
+);
+
 }
 
 function renderReports(){
+
 let list=get('records');
-document.getElementById('reportList').innerHTML=list.slice().reverse().map(r=>
-`<div class="item">${r.name}<br>${r.type}<br><small>${r.time}</small></div>`
+
+document.getElementById('reportList').innerHTML=
+
+list.slice().reverse().map(r=>
+`<div class="item">
+<b>${r.name}</b>
+<br>${r.type}
+<br><small>${r.time}</small>
+<br><small>فاصله از محل کار: ${r.distance??'-'} متر</small>
+</div>`
 ).join('')||'هنوز ترددی ثبت نشده است';
+
 }
+
 </script>
+
 </body>
 </html>
