@@ -1,13 +1,16 @@
 {
+  "id": "./",
   "name": "حضوربان",
   "short_name": "حضوربان",
   "description": "سامانه هوشمند حضور و غیاب کارکنان با موقعیت مکانی GPS",
+  "lang": "fa",
+  "dir": "rtl",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f2f5f8",
-  "theme_color": "#102b4e",
+  "background_color": "#F2F5F8",
+  "theme_color": "#102B4E",
   "icons": [
     {
       "src": "icon-192.png",
