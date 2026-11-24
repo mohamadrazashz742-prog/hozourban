@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'hozourban-v1';
+const CACHE_NAME = 'hozourban-v2';
 
 const FILES_TO_CACHE = [
   './',
