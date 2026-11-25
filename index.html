@@ -1,42 +1,63 @@
+from pathlib import Path
 
-<!DOCTYPE html>
+html = r'''<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#101f3c">
 <title>حضوربان</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
+:root{--navy:#101f3c;--navy2:#192f54;--gold:#d8b45c;--gold2:#f2d98e;--ink:#263449}
 *{box-sizing:border-box}
-body{margin:0;background:#eef2f7;font-family:Tahoma;color:#263449}
-header{background:#173b67;color:white;text-align:center;padding:22px}
-main{max-width:550px;margin:20px auto;padding:14px}
-.card{background:white;padding:20px;border-radius:14px;margin-bottom:15px;box-shadow:0 3px 12px #0001}
-h3{color:#173b67;margin-top:0}
-input,button{width:100%;padding:13px;margin:7px 0;border-radius:8px;font-family:Tahoma;font-size:14px}
-input{border:1px solid #ccd5df}
-button{border:0;background:#1767b2;color:white;font-weight:bold;cursor:pointer}
+body{margin:0;background:#f3f0e8;font-family:Tahoma;color:var(--ink)}
+header{background:radial-gradient(circle at 50% 0,#29466f 0,var(--navy) 68%);color:#fff;text-align:center;padding:24px 18px 22px;border-bottom:4px solid var(--gold);box-shadow:0 5px 18px #101f3c30}
+.brand-mark{width:112px;height:112px;margin:0 auto 10px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#203b64,#0a1429);box-shadow:0 0 0 5px #d8b45c22,0 8px 24px #0005}
+.brand-mark svg{width:88px;height:88px}
+header h1{margin:4px 0;color:var(--gold2);font-size:29px;letter-spacing:1px}
+header .subtitle{font-size:13px;color:#f4e8c5}
+main{max-width:550px;margin:18px auto;padding:14px}
+.card{background:#fff;padding:20px;border-radius:16px;margin-bottom:15px;border:1px solid #e5d8b6;box-shadow:0 5px 18px #182b4912}
+h3{color:var(--navy2);margin-top:0;border-right:3px solid var(--gold);padding-right:10px}
+input,button{width:100%;padding:13px;margin:7px 0;border-radius:9px;font-family:Tahoma;font-size:14px}
+input{border:1px solid #d7d1c3;background:#fffdf8}
+input:focus{outline:2px solid #d8b45c66;border-color:var(--gold)}
+button{border:1px solid #b89543;background:linear-gradient(135deg,#203b64,#101f3c);color:#fff;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5}
-.secondary{background:#53677e}
-.danger{background:#b52c38}
+.secondary{background:linear-gradient(135deg,#b99342,#8d6b27);border-color:#8d6b27;color:#fff}
+.danger{background:#9e3038;border-color:#81232b}
 .hidden{display:none}
-.item{padding:12px;border-bottom:1px solid #ddd}
+.item{padding:12px;border-bottom:1px solid #e8e1d2}
 small{color:#667}
 #map{height:350px;width:100%;border-radius:10px;margin:12px 0;z-index:1}
-.info{background:#eaf3ff;padding:12px;border-radius:8px;line-height:2;font-size:13px}
+.info{background:#f8f1df;border:1px solid #e6d3a0;padding:12px;border-radius:9px;line-height:2;font-size:13px;color:#514323}
+.welcome{background:linear-gradient(135deg,#fffaf0,#f4e7c5);border:1px solid #d9bd75;border-right:4px solid var(--gold);padding:14px 16px;border-radius:12px;margin-bottom:15px;line-height:2;color:#493b1d;font-size:13px}
+.welcome b{display:block;color:#8b6928;margin-bottom:3px}
 </style>
 </head>
 <body>
 
 <header>
+<div class="brand-mark" role="img" aria-label="نشان حضوربان">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#e3c36f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M50 7 78 17 91 42 84 72 50 93 16 72 9 42 22 17Z"/>
+<path d="M50 14 72 22 83 43 77 67 50 84 23 67 17 43 28 22Z"/>
+<path d="M31 53V39l8-8 8 8v14M53 53V34l8-7 8 7v19M25 59h50"/>
+<path d="M38 68c0-7 5-12 12-12s12 5 12 12M43 68c0-4 3-7 7-7s7 3 7 7"/>
+<path d="M50 20v8M46 24h8M19 49h7M74 49h7"/>
+<circle cx="50" cy="49" r="4"/>
+</svg>
+</div>
 <h1>حضوربان</h1>
-سامانه هوشمند حضور و غیاب
+<div class="subtitle">سامانه هوشمند حضور و غیاب کارکنان</div>
 </header>
 
 <main>
 
 <section id="home">
+<div class="welcome"><b>پیام خوشامدگویی مدیر</b>همکاران گرامی، به سامانه هوشمند حضور و غیاب حضوربان خوش آمدید. با آرزوی موفقیت و همکاری سازنده برای همه شما.</div>
 <div class="card">
 <h3>ورود کارکنان</h3>
 <input id="name" placeholder="نام">
@@ -200,8 +221,8 @@ marker=L.marker([lat,lng]).addTo(map);
 
 circle=L.circle([lat,lng],{
 radius:RADIUS,
-color:'#1767b2',
-fillColor:'#3388ff',
+color:'#b89543',
+fillColor:'#d8b45c',
 fillOpacity:0.15
 }).addTo(map);
 
@@ -464,3 +485,8 @@ navigator.serviceWorker.register('./service-worker.js')
 
 </body>
 </html>
+'''
+
+path = Path("/mnt/data/hozourban-index.html")
+path.write_text(html, encoding="utf-8")
+print(f"فایل آماده شد: {path} | حجم: {path.stat().st_size:,} بایت")
